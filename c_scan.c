@@ -197,6 +197,7 @@ int	c_isdigit(int c)
 	return count;
 }
 
+#ifdef C_SSCANF
 // custom
 char backch = 0;
 char c_getch()
@@ -221,3 +222,4 @@ bool c_getbackch(char b)
 	else 
 		return 0;
 }
+#endif
