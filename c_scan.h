@@ -24,6 +24,10 @@
 #define EOF -1
 #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 int c_isspace(const int c);
 int	c_isdigit(int c);
 
@@ -38,5 +42,9 @@ bool c_getbackch(char b); //new
 
 // HW
 int getch();
+
+#ifdef __cplusplus
+};
+#endif
 
 #endif /* _C_SCAN_H_ */
