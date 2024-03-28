@@ -96,6 +96,7 @@ int	c_isdigit(int c)
 			switch (format[PointFt])
 			{
 				case 'c':
+				{
 					while (c_isspace(CURCHAR)) // ignore isspace (std)
 						NEXTCHAR; //
 					if (save)
@@ -104,9 +105,11 @@ int	c_isdigit(int c)
 					//if (save) // ignore %* (std)
 						count++;
 					break;
+				}
 				case 'u':
 				case 'd':
 				case 'i':
+				{
 					int sign = 1;
 					while (!c_isdigit(CURCHAR))
 					{
@@ -130,8 +133,10 @@ int	c_isdigit(int c)
 					//if (save) // ignore %* (std)
 						count++;
 					break;
+				}
 				case ']':
 				case 's':
+				{
 					char* t = save ? *va_arg(ap, char**) : NULL;
 
 					while (c_isspace(CURCHAR)) // ignor isspace (std)
@@ -175,6 +180,7 @@ int	c_isdigit(int c)
 					//if (save) // ignore %* (std)
 						count++;
 					break;
+				}
 			}
 			#ifndef C_SSCANF
 			if(format[PointFt] != 'c' 
