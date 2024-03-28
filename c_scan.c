@@ -106,6 +106,7 @@ int	c_isdigit(int c)
 					break;
 				case 'u':
 				case 'd':
+				case 'i':
 					int sign = 1;
 					while (!c_isdigit(CURCHAR))
 					{
@@ -131,7 +132,7 @@ int	c_isdigit(int c)
 					break;
 				case ']':
 				case 's':
-					char* t = save ? va_arg(ap, char*) : NULL;
+					char* t = save ? *va_arg(ap, char**) : NULL;
 
 					while (c_isspace(CURCHAR)) // ignor isspace (std)
 						NEXTCHAR; //
