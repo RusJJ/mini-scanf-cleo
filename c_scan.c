@@ -33,6 +33,8 @@ int c_isdigit(int c)
 }
 
 // parodies the standard
+#define CHECKLEN() (lenEn != true || len > 0)
+#define SKIPUNTILSPACE() do { while (c_isspace(CURCHAR)) NEXTCHAR; } while (0)
 #ifdef C_SSCANF
     #define NEXTCHAR (PointBuf++)
     #define CURCHAR (buff[PointBuf])
@@ -97,10 +99,8 @@ int c_isdigit(int c)
             {
                 case 'c':
                 {
-                    while (c_isspace(CURCHAR)) // ignore isspace (std)
-                        NEXTCHAR; //
-                    if (save)
-                        *(char*)va_arg(ap, char*) = CURCHAR;
+                    SKIPUNTILSPACE();
+                    if (save) *(char*)va_arg(ap, char*) = CURCHAR;
                     NEXTCHAR;
                     //if (save) // ignore %* (std)
                         count++;
@@ -120,7 +120,7 @@ int c_isdigit(int c)
                         NEXTCHAR;
                     }
                     long value = 0;
-                    while(c_isdigit(CURCHAR) && (lenEn != true || len > 0))
+                    while(c_isdigit(CURCHAR) && CHECKLEN())
                     {
                         value *= 10;
                         value += (int)(CURCHAR - '0');
@@ -137,15 +137,14 @@ int c_isdigit(int c)
                 case ']':
                 case 's':
                 {
-					// That's for my project. It will not break other's code!
-					#ifdef AML_CLEO
-                    	char* t = save ? *va_arg(ap, char**) : NULL;
-					#else
-                    	char* t = save ? va_arg(ap, char*) : NULL;
-					#endif
+                    // That's for my project. It will not break other's code!
+                    #ifdef AML_CLEO
+                        char* t = save ? *va_arg(ap, char**) : NULL;
+                    #else
+                        char* t = save ? va_arg(ap, char*) : NULL;
+                    #endif
 
-                    while (c_isspace(CURCHAR)) // ignore isspace (std)
-                        NEXTCHAR; //
+                    SKIPUNTILSPACE();
 
                     while (true)
                     {
@@ -155,17 +154,19 @@ int c_isdigit(int c)
                             bool invert = (stop[0] == '^');
                             con = !invert;
                             for (unsigned i = (invert ? 1 : 0); i < stopN; i++)
+                            {
                                 if (stop[i] == CURCHAR)
                                 {
                                     con = invert;
                                     break;
                                 }
+                            }
 
                             if (con == true)
                                 break;
                         }
 
-                        if (!c_isspace(CURCHAR) || (!con && stopN != 0) && (lenEn != true || len > 0))
+                        if (!c_isspace(CURCHAR) || (!con && stopN != 0) && CHECKLEN())
                         {
                             if (save)
                                 *t = CURCHAR;
@@ -182,6 +183,47 @@ int c_isdigit(int c)
                             *t = '\0';
                         t++;
                     }
+                    //if (save) // ignore %* (std)
+                        count++;
+                    break;
+                }
+                case 'e':
+                case 'f':
+                case 'g':
+                {
+                    int sign = 1;
+                    while (!c_isdigit(CURCHAR))
+                    {
+                        if (CURCHAR == '+' || CURCHAR == '-')
+                            if (CURCHAR == '-')
+                                sign = -1;
+                        NEXTCHAR;
+                    }
+                    float value = 0;
+                    while(c_isdigit(CURCHAR) && CHECKLEN())
+                    {
+                        value *= 10;
+                        value += (int)(CURCHAR - '0');
+                        NEXTCHAR;
+                        len--;
+                    }
+
+                    float mantissa = 0, mantissamult = 0.1;
+                    if(CURCHAR == '.' || CURCHAR == ',')
+                    {
+                        NEXTCHAR;
+                        len--;
+                        while(c_isdigit(CURCHAR) && CHECKLEN())
+                        {
+                            mantissa += mantissamult * (int)(CURCHAR - '0');
+                            mantissamult *= 0.1;
+                            NEXTCHAR;
+                            len--;
+                        }
+                    }
+
+                    if (save)
+                        *(float*)va_arg(ap, float*) = (value + mantissa) * sign;
                     //if (save) // ignore %* (std)
                         count++;
                     break;
