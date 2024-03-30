@@ -4,7 +4,7 @@
  */
 
 #ifndef _C_SCAN_H_
-#define	_C_SCAN_H_
+#define _C_SCAN_H_
 
 // conf
 // sscanf / scanf
@@ -29,19 +29,18 @@ extern "C" {
 #endif
 
 int c_isspace(const int c);
-int	c_isdigit(int c);
+int c_isdigit(int c);
 
 // scan
 #ifdef C_SSCANF
-	int c_sscanf(const char* buff, char* format, ...);
+    int c_sscanf(const char* buff, char* format, ...);
 #else
-	int c_scanf(char* format, ...);
+    int c_scanf(char* format, ...);
+    char c_getch(); //custom
+    bool c_getbackch(char b); //new
+    // HW
+    int getch();
 #endif
-char c_getch(); //custom
-bool c_getbackch(char b); //new
-
-// HW
-int getch();
 
 #ifdef __cplusplus
 };
