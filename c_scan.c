@@ -137,9 +137,14 @@ int c_isdigit(int c)
                 case ']':
                 case 's':
                 {
-                    char* t = save ? *va_arg(ap, char**) : NULL;
+					// That's for my project. It will not break other's code!
+					#ifdef AML_CLEO
+                    	char* t = save ? *va_arg(ap, char**) : NULL;
+					#else
+                    	char* t = save ? va_arg(ap, char*) : NULL;
+					#endif
 
-                    while (c_isspace(CURCHAR)) // ignor isspace (std)
+                    while (c_isspace(CURCHAR)) // ignore isspace (std)
                         NEXTCHAR; //
 
                     while (true)
